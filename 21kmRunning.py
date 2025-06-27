@@ -7,7 +7,7 @@ from sklearn.neighbors import KNeighborsRegressor
 from sklearn.metrics import mean_squared_error, r2_score
 
 
-df = pd.read_csv('/kaggle/input/5kmrunnersdataset/scraped_data.csv')
+df = pd.read_csv(r"/Users/admin/Projects/RunningPerformance/scraped_data.csv")
 df
 
 df = df.dropna()
@@ -33,25 +33,37 @@ plt.pie(gender_counts, labels=['Male', 'Female'], autopct='%1.1f%%', startangle=
 plt.title('Gender Distribution')
 plt.show()
 
-def time_to_hours(time_str):
+def time_to_minutes(time_str):
     parts = time_str.split(':')
     if len(parts) == 2:
-        parts.insert(0, '0')
+        parts.insert(0, '0')  # Add hours if missing
     hours = int(parts[0])
     minutes = int(parts[1])
     seconds = int(parts[2])
     total_seconds = hours * 3600 + minutes * 60 + seconds
-    return total_seconds / 3600
+    return total_seconds / 60
 
-df['Time'] = df['Time'].apply(time_to_hours)
+df['Time'] = df['Time'].apply(time_to_minutes)
 df
 
+import matplotlib.pyplot as plt
+from matplotlib.lines import Line2D
+
+colors = df['Gender'].map({0: 'violet', 1: 'yellow'})
+
 plt.figure(figsize=(10, 6))
-plt.scatter(df['Age'], df['Time'], c=df['Gender'], cmap='viridis', alpha=0.6)
-plt.colorbar(label='Gender (0=Female, 1=Male)')
-plt.title('Age vs. Time')
+plt.scatter(df['Age'], df['Time'], c=colors, alpha=1)
+
+# Custom legend
+legend_elements = [
+    Line2D([0], [0], marker='o', color='w', label='Female', markerfacecolor='violet', markersize=8),
+    Line2D([0], [0], marker='o', color='w', label='Male', markerfacecolor='yellow', markersize=8)
+]
+plt.legend(handles=legend_elements, title='Gender')
+
+plt.title('Age and Time')
 plt.xlabel('Age')
-plt.ylabel('Time (seconds)')
+plt.ylabel('Time (minutes)')
 plt.show()
 
 X = df[['Age', 'Gender']]

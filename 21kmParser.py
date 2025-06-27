@@ -30,21 +30,26 @@ def scrape_page():
 
     return data
 
+
 def scrape_all_pages(url):
     driver.get(url)
     while True:
         try:
-            WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CLASS_NAME, 'show-more')))
+            WebDriverWait(driver, 5).until(
+                EC.presence_of_element_located((By.CLASS_NAME, 'show-more'))
+            )
             show_more_button = driver.find_element(By.CLASS_NAME, 'show-more')
-            show_more_button.click()
-            WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, 'tr.results-body')))
-            driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-            time.sleep(2)
-        except Exception as e:
-            print("An error occurred:", e)
+
+            if show_more_button.is_displayed() and show_more_button.is_enabled():
+                driver.execute_script("arguments[0].click();", show_more_button)
+                time.sleep(2)
+            else:
+                break
+        except Exception:
             break
 
     return scrape_page()
+
 
 def write_to_csv(data):
     with open('scraped_data.csv', 'w', newline='', encoding='utf-8') as csvfile:
@@ -52,7 +57,7 @@ def write_to_csv(data):
         writer.writerow(['Name', 'Gender', 'Age', 'Time'])
         writer.writerows(data)
 
-base_url = "https://nomadsport.net/event/SLR2023/results/5km"
+base_url = "https://nomadsport.net/event/SLR2023/results/21km"
 scraped_data = scrape_all_pages(base_url)
 write_to_csv(scraped_data)
 
