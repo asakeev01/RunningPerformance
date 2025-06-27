@@ -103,7 +103,8 @@ The analysis demonstrated that both age and gender had significant correlations 
 - **KNN R² Score**: *Insert R² value*
 
 ![Race Image](./images/age.png)
-![Race Image](./images/performance.png)
+![Race Image](./images/5kmPerformance.png)
+![Race Image](./images/21kmPerformance.png)
 
 ## License
 
